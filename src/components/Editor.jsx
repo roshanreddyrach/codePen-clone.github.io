@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { useState } from 'react';
+
 import { Box, styled } from '@mui/material'
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
@@ -10,6 +12,16 @@ import 'codemirror/theme/material.css'
 import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/css/css'
+
+import '../App.css'
+
+const Container = styled(Box)`
+      flex-grow: 1;
+      flex-basic: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 8px 8px;
+`
 
 const Heading = styled(Box)`
          background: #1d1e22;
@@ -25,27 +37,49 @@ const Header = styled(Box)`
          font-weight: 700;
 `
 
-export default function Editor() {
+export default function Editor({ heading, icon, color, value, onChange }) {
+
+     const [ open, setOpen ] = useState(true)
+
+       const handleChange = (editor, data, value) => {
+           onChange(value)
+       }
+
   return (
-     <Box>
+     <Container style={ open ? null : {flexGrow: 0 }}>
           <Header>
                <Heading>
                     <Box
                          component="span"
                          style={{
-                            background: 'red',
+                            background: color,
                             height: 20,
                             width: 20,
                             display: 'flex',
                             placeContent: 'center',
-                            borderRadius: 5
+                            borderRadius: 5,
+                            color: '#000'
                          }}
-                         >/</Box>
-                        HTML
+                         > { icon }</Box>
+                        { heading }
                </Heading>
-                <CloseFullscreenIcon />
+                <CloseFullscreenIcon
+                    fontSize='small'
+                    style={{ alignSelf: 'center'}}
+                    onClick={() => setOpen(prevState => !prevState)}
+                />
           </Header>
-          <ControlledEditor />
-     </Box>
+          <ControlledEditor
+                className='controlled-editor'
+                value={value}
+                onBeforeChange={handleChange}
+                options={{
+                    theme: 'material',
+                    lineNumbers: true,
+
+                }}
+
+           />
+     </Container>
   )
 }
